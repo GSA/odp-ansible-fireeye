@@ -1,0 +1,68 @@
+---
+
+# Install through package manager when s3 bucket option is not set
+
+- name: Install FireEye package
+  package:
+    name: "{{ fireeye_package }}"
+    state: present 
+  notify: "systemd_restart_xagt"
+  when: fireeye_s3_bucket == ""
+
+# Download and install FireEye package from s3 bucket when fireeye_s3_bucket is set
+
+- name: Add packages installed to facts
+  package_facts:
+    manager: auto
+
+- name: Ensure botocore and boto3 modules are installed
+  pip:
+    name:         [ "boto3", "botocore"]
+    extra_args:   "--user"
+  when: fireeye_s3_bucket != ""
+
+- name: Download from s3 bucket when fireeye_s3_bucket is set
+  aws_s3:
+    bucket: "{{ fireeye_s3_bucket }}"
+    object: "{{ cylance_s3_prefix }}/{{ fireeye_package }}"
+    dest: /tmp/{{ fireeye_package }}
+    mode: get
+  when: fireeye_s3_bucket != ""
+
+- name: Install FireEye using yum if package manager is yum
+  yum:
+    name: /tmp/{{ fireeye_package }}
+    state: present
+  notify: "systemd_restart_xagt"
+  when: fireeye_s3_bucket != "" and ansible_pkg_mgr == "yum"
+
+- name: Install FireEye using apt if package manager is apt
+  apt:
+    deb: /tmp/{{ fireeye_package }}
+  notify: "systemd_restart_xagt"
+  when: fireeye_s3_bucket != "" and ansible_pkg_mgr == "apt"
+
+- name: Remove the FireEye installer 
+  file:
+    path: /tmp/{{ fireeye_package }}
+    state: absent
+  when: fireeye_s3_bucket != ""    
+
+# Configure FireEye service
+
+- name: Configure FireEye
+  template:
+    src: agent_config.json.j2
+    dest: /var/lib/fireeye/xagt/agent_config.json
+
+- name: run fireeye config
+  shell: /opt/fireeye/bin/xagt -i /var/lib/fireeye/xagt/agent_config.json
+  args:
+    creates: /var/lib/fireeye/xagt/main.db
+  become: yes
+
+
+- name: Enable and start service xagt
+  service:
+    name: xagt
+    enabled: yes

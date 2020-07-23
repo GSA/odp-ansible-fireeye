@@ -1,0 +1,44 @@
+{
+  "serverlist": {
+    "servers": [
+    {% for server in fireeye_servers %}
+      {
+        "server": "{{ server }}"
+      },
+    {% endfor %}
+    ]
+  },
+  "credentials": {
+    "cacert": "{{ fireeye_cacert }}",
+    "provocert": "{{ fireeye_provocert }}",
+    "provokey": "{{ fireeye_provokey }}"
+  },
+  "events": {
+    "active_collection_enabled": false
+  },
+  "exploitDetection": {
+    "enable_production": false
+  },
+  "fips": {
+    "enabled": false
+  },
+  "service": {
+    "config_poll_interval_sec": 900
+  },
+  "process": {
+    "cpu_limit": 50
+  },
+  "ProtectionServices": {
+    "enable": true,
+    "age_to_purge": 90
+  },
+  "malwareDetection": {
+    "enable": false
+  },
+  "type": "config",
+  "version": "2.0.0",
+  "channel": "bootstrap",
+  "name": "default",
+  "id": "vR4HszTmeZzAqQLILiqiPg==",
+  "ts": "2019-08-24T01:26:14Z"
+}

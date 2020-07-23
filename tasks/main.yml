@@ -1,0 +1,5 @@
+---
+# tasks file for odp-ansible-fireeye
+
+- name: Install for Linux
+  include: linux_install.yml

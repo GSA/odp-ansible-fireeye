@@ -1,0 +1,14 @@
+---
+# defaults file for odp-ansible-fireeye
+
+fireeye_cacert: "XXXXXX"
+fireeye_provocert: "XXXXXX"
+fireeye_provokey: "XXXXXX"
+fireeye_servers:
+  - localhost
+  - localhost.local
+fireeye_package: "xagt-32.30.0-1.el7.x86_64.rpm"
+
+# If you are installing from s3 
+fireeye_s3_bucket: "mcaas-devops"
+fireeye_s3_prefix: "rpm"

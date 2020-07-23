@@ -1,0 +1,8 @@
+---
+# handlers file for odp-ansible-fireeye
+
+- name: Systemd xagt
+  service:
+    name: xagt
+    state: restarted
+  listen: "systemd_restart_xagt"
