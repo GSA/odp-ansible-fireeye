@@ -1,9 +1,4 @@
 ---
-# Get package facts
-
-- name: Add packages installed to facts
-  package_facts:
-    manager: auto
 
 # Install through package manager when s3 bucket option is not set
 
