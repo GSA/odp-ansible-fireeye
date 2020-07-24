@@ -1,19 +1,29 @@
 ---
-
-# Install through package manager when s3 bucket option is not set
-
-- name: Install FireEye package
-  package:
-    name: "{{ fireeye_package }}"
-    state: present 
-  notify: "systemd_restart_xagt"
-  when: fireeye_s3_bucket == ""
-
-# Download and install FireEye package from s3 bucket when fireeye_s3_bucket is set
+# Get package facts
 
 - name: Add packages installed to facts
   package_facts:
     manager: auto
+
+# Install through package manager when s3 bucket option is not set
+
+- name: Install FireEye package yum
+  yum:
+    name: "{{ fireeye_package }}"
+    state: present
+  notify: "systemd_restart_xagt"
+  disable_gpg_check: yes
+  validate_certs: no
+  when: fireeye_s3_bucket == "" and ansible_pkg_mgr == "yum"
+
+- name: Install FireEye package apt
+  apt:
+    name: "{{ fireeye_package }}"
+    state: present 
+  notify: "systemd_restart_xagt"
+  when: fireeye_s3_bucket == "" and ansible_pkg_mgr == "apt"
+
+# Download and install FireEye package from s3 bucket when fireeye_s3_bucket is set
 
 - name: Ensure botocore and boto3 modules are installed
   pip:
@@ -59,7 +69,7 @@
   shell: /opt/fireeye/bin/xagt -i /var/lib/fireeye/xagt/agent_config.json
   args:
     creates: /var/lib/fireeye/xagt/main.db
-  become: yes
+  notify: "systemd_restart_xagt"
 
 
 - name: Enable and start service xagt
