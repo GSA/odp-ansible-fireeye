@@ -24,7 +24,7 @@
 - name: Download from s3 bucket when fireeye_s3_bucket is set
   aws_s3:
     bucket: "{{ fireeye_s3_bucket }}"
-    object: "{{ cylance_s3_prefix }}/{{ fireeye_package }}"
+    object: "{{ fireeye_s3_prefix }}/{{ fireeye_package }}"
     dest: /tmp/{{ fireeye_package }}
     mode: get
   when: fireeye_s3_bucket != ""

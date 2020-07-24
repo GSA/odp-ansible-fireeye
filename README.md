@@ -49,7 +49,7 @@ Example Playbook When Using OS Native Package Manager
       fireeye_provocert: "123itsamystery"
       fireeye_provokey: "123itsamystery"
       fireeye_servers: [ "1.1.1.1", "2.2.2.2"  ]
-      fireeye_packge: xagt-32.30.0-1
+      fireeye_package: xagt-32.30.0-1
 ```
 
 Example when downloading install from S3 bucket
@@ -64,7 +64,7 @@ Example when downloading install from S3 bucket
       fireeye_provocert: "123itsamystery"
       fireeye_provokey: "123itsamystery"
       fireeye_servers: [ "1.1.1.1", "2.2.2.2"  ]
-      fireeye_packge: xagt-32.30.0-1
+      fireeye_package: "xagt-32.30.0-1.el7.x86_64.rpm"
       fireeye_s3_bucket: "ma_bucket"
       fireeye_s3_prefix: "my_prefix"
 
