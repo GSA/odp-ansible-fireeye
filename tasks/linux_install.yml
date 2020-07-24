@@ -7,7 +7,6 @@
     name: "{{ fireeye_package }}"
     state: present
   notify: "systemd_restart_xagt"
-  disable_gpg_check: yes
   validate_certs: no
   when: fireeye_s3_bucket == "" and ansible_pkg_mgr == "yum"
 
