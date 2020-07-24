@@ -71,4 +71,6 @@
 - name: Enable and start service xagt
   service:
     name: xagt
+    state: started
     enabled: yes
+

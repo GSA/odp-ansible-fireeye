@@ -5,7 +5,7 @@
 
       {
         "server": "{{ server }}"
-      }{{ "," if not loop.last }}
+      }{% if not loop.last %},{% endif %}
     {% endfor %}
     ]
   },
