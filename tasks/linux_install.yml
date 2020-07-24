@@ -6,14 +6,16 @@
   yum:
     name: "{{ fireeye_package }}"
     state: present
+    disable_gpg_check: yes
+    validate_certs: no
   notify: "systemd_restart_xagt"
-  validate_certs: no
   when: fireeye_s3_bucket == "" and ansible_pkg_mgr == "yum"
 
 - name: Install FireEye package apt
   apt:
     name: "{{ fireeye_package }}"
     state: present 
+    force: yes
   notify: "systemd_restart_xagt"
   when: fireeye_s3_bucket == "" and ansible_pkg_mgr == "apt"
 
