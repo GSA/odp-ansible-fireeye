@@ -45,11 +45,12 @@ Example Playbook When Using OS Native Package Manager
 - hosts: servers
   roles:
     - role: odp-ansible-fireeye
-      fireeye_cacert: "123itsamystery"
-      fireeye_provocert: "123itsamystery"
-      fireeye_provokey: "123itsamystery"
-      fireeye_servers: [ "1.1.1.1", "2.2.2.2"  ]
-      fireeye_package: xagt-32.30.0-1
+      vars:
+        fireeye_cacert: "123itsamystery"
+        fireeye_provocert: "123itsamystery"
+        fireeye_provokey: "123itsamystery"
+        fireeye_servers: [ "1.1.1.1", "2.2.2.2"  ]
+        fireeye_package: xagt-32.30.0-1
 ```
 
 Example when downloading install from S3 bucket
@@ -57,16 +58,15 @@ Example when downloading install from S3 bucket
 ```
 - hosts: servers
   roles:
-- hosts: servers
-  roles:
     - role: odp-ansible-fireeye
-      fireeye_cacert: "123itsamystery"
-      fireeye_provocert: "123itsamystery"
-      fireeye_provokey: "123itsamystery"
-      fireeye_servers: [ "1.1.1.1", "2.2.2.2"  ]
-      fireeye_package: "xagt-32.30.0-1.el7.x86_64.rpm"
-      fireeye_s3_bucket: "ma_bucket"
-      fireeye_s3_prefix: "my_prefix"
+      vars:    
+        fireeye_cacert: "123itsamystery"
+        fireeye_provocert: "123itsamystery"
+        fireeye_provokey: "123itsamystery"
+        fireeye_servers: [ "1.1.1.1", "2.2.2.2"  ]
+        fireeye_package: "xagt-32.30.0-1.el7.x86_64.rpm"
+        fireeye_s3_bucket: "ma_bucket"
+        fireeye_s3_prefix: "my_prefix"
 
 ```
 
