@@ -65,12 +65,10 @@
   shell: /opt/fireeye/bin/xagt -i /var/lib/fireeye/xagt/agent_config.json
   args:
     creates: /var/lib/fireeye/xagt/main.db
-  notify: "systemd_restart_xagt"
-
 
 - name: Enable and start service xagt
   service:
     name: xagt
-    state: started
+    state: stopped
     enabled: yes
 
