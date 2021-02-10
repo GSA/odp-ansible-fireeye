@@ -14,30 +14,6 @@
   when: result is defined and (result.state is not defined or result.name is not defined)
   ignore_errors: yes
 
-# Download and install FireEye package from s3 bucket when fireeye_s3_bucket is set
-- name: Create Stage Folder
-  win_file:
-    path: C:\Temp
-    state: directory
-
-- name: Install python3
-  win_chocolatey:
-    name: "{{ item  }}"
-    state: present
-  with_items:
-  - python3
-  - awscli
-
-- name: Install boto3
-  win_command: pip3.exe install boto boto3 botocore
-
-- name: install aws tools
-  win_package:
-    path: http://sdk-for-net.amazonwebservices.com/latest/AWSToolsAndSDKForNet.msi
-    state: present
-    product_id: '{186A6440-3AD4-4E0E-ACC2-C098CA589290}'
-    creates_path: 'C:\Program Files\Amazon\Ec2ConfigService'
-
 - name: Download FireEye Agent from S3
   win_command: "PowerShell.exe -Command Read-S3Object -BucketName {{ fireeye_s3_bucket }} -Key {{ fireeye_s3_prefix }}/{{ fireeye_package }} -File c:\\Temp\\FireEyeAgent.zip"
 
