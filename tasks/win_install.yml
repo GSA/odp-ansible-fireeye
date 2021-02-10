@@ -23,7 +23,7 @@
     dest: C:\Temp\FireEyeAgent
     delete_archive: yes
 
-- name: Install an Nessus agent
+- name: Install an FireEye agent
   win_package:
     path: C:\Temp\FireEyeAgent\xagtSetup_32.30.0_universal.msi
     arguments: /qn
