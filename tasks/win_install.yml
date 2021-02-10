@@ -1,0 +1,81 @@
+---
+
+# Checks if the service is already installed and running as a service
+- name: Check if service exists
+  win_service:
+    name: xagt
+  register: result
+  ignore_errors: yes
+
+- name: Remove a service
+  ansible.windows.win_service:
+    name: xagt
+    state: absent
+  when: result is defined and (result.state is not defined or result.name is not defined)
+  ignore_errors: yes
+
+# Download and install FireEye package from s3 bucket when fireeye_s3_bucket is set
+- name: Create Stage Folder
+  win_file:
+    path: C:\Temp
+    state: directory
+
+- name: Install python3
+  win_chocolatey:
+    name: "{{ item  }}"
+    state: present
+  with_items:
+  - python3
+  - awscli
+
+- name: Install boto3
+  win_command: pip3.exe install boto boto3 botocore
+
+- name: install aws tools
+  win_package:
+    path: http://sdk-for-net.amazonwebservices.com/latest/AWSToolsAndSDKForNet.msi
+    state: present
+    product_id: '{186A6440-3AD4-4E0E-ACC2-C098CA589290}'
+    creates_path: 'C:\Program Files\Amazon\Ec2ConfigService'
+
+- name: Download FireEye Agent from S3
+  win_command: "PowerShell.exe -Command Read-S3Object -BucketName {{ fireeye_s3_bucket }} -Key {{ fireeye_s3_prefix }}/{{ fireeye_package }} -File c:\\Temp\\FireEyeAgent.zip"
+
+- name: Unzip FireEyeAgent.zip
+  win_unzip:
+    src: C:\Temp\FireEyeAgent.zip
+    dest: C:\Temp\FireEyeAgent
+    delete_archive: yes
+
+- name: Install an Nessus agent
+  win_package:
+    path: C:\Temp\FireEyeAgent\xagtSetup_32.30.0_universal.msi
+    arguments: /qn
+
+# Configure FireEye service
+- name: Configure FireEye
+  win_template:
+    src: agent_config.json.j2
+    dest: C:\Program Files (x86)\FireEye\xagt\agent_config.json
+
+- name: Run fireeye with configuration
+  win_command: '"C:\Program Files (x86)\FireEye\xagt\xagt.exe" -i "C:\Program Files (x86)\FireEye\xagt\agent_config.json"'
+
+- name: Set service startup mode to auto and ensure it is started
+  win_service:
+    name: xagt
+    start_mode: auto
+    state: started
+
+- name: Check if service is running
+  win_service:
+    name: xagt
+  register: result
+  ignore_errors: yes
+
+- name: Stop Service
+  win_service:
+    name: xagt
+    state: stopped
+  when: result is defined and (result.state is not defined or result.name is not defined)
+  ignore_errors: yes

@@ -1,5 +1,15 @@
 ---
 # tasks file for odp-ansible-fireeye
 
-- name: Install for Linux
-  include: linux_install.yml
+- name: RedHat
+  include_tasks: linux_install.yml
+  when: ansible_facts['os_family']|lower == 'redhat'
+
+- name: Ubuntu and debian
+  include_tasks: linux_install.yml
+  when: ansible_facts['os_family']|lower == 'debian'
+
+- name: Windows Server and Workstation
+  include_tasks: win_install.yml
+  when: ansible_facts['os_family']|lower == 'windows'
+  
