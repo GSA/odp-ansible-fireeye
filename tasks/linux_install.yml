@@ -1,7 +1,12 @@
 ---
 
-# Install through package manager when s3 bucket option is not set
+# Create Staging Folder
+- name: Create Staging Folder
+  file:
+    path: /build-artifacts/
+    state: directory
 
+# Install through package manager when s3 bucket option is not set
 - name: Install FireEye package yum
   yum:
     name: "{{ fireeye_package }}"
@@ -29,24 +34,24 @@
   aws_s3:
     bucket: "{{ fireeye_s3_bucket }}"
     object: "{{ fireeye_s3_prefix }}/{{ fireeye_package }}"
-    dest: /tmp/{{ fireeye_package }}
+    dest: /build-artifacts/{{ fireeye_package }}
     mode: get
   when: fireeye_s3_bucket != ""
 
 - name: Install FireEye using yum if package manager is yum
   yum:
-    name: /tmp/{{ fireeye_package }}
+    name: /build-artifacts/{{ fireeye_package }}
     state: present
   when: fireeye_s3_bucket != "" and ansible_pkg_mgr == "yum"
 
 - name: Install FireEye using apt if package manager is apt
   apt:
-    deb: /tmp/{{ fireeye_package }}
+    deb: /build-artifacts/{{ fireeye_package }}
   when: fireeye_s3_bucket != "" and ansible_pkg_mgr == "apt"
 
 - name: Remove the FireEye installer 
   file:
-    path: /tmp/{{ fireeye_package }}
+    path: /build-artifacts/{{ fireeye_package }}
     state: absent
   when: fireeye_s3_bucket != ""    
 
