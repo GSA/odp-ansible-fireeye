@@ -15,27 +15,22 @@
   ignore_errors: yes
 
 - name: Download FireEye Agent from S3
-  win_command: "PowerShell.exe -Command Read-S3Object -BucketName {{ fireeye_s3_bucket }} -Key {{ fireeye_s3_prefix }}/{{ fireeye_package }} -File c:\\Temp\\FireEyeAgent.zip"
-
-- name: Unzip FireEyeAgent.zip
-  win_unzip:
-    src: C:\Temp\FireEyeAgent.zip
-    dest: C:\Temp\FireEyeAgent
-    delete_archive: yes
-
-- name: Install an FireEye agent
-  win_package:
-    path: C:\Temp\FireEyeAgent\xagtSetup_32.30.0_universal.msi
-    arguments: /qn
+  win_command: "PowerShell.exe -Command Read-S3Object -BucketName {{ fireeye_s3_bucket }} -Key {{ fireeye_s3_prefix }}/{{ fireeye_package }} -File c:\\Temp\\xagtSetup.msi"
 
 # Configure FireEye service
 - name: Configure FireEye
   win_template:
     src: agent_config.json.j2
-    dest: C:\Program Files (x86)\FireEye\xagt\agent_config.json
+    #dest: C:\Program Files (x86)\FireEye\xagt\agent_config.json
+    dest: C:\Temp\agent_config.json
 
-- name: Run fireeye with configuration
-  win_command: '"C:\Program Files (x86)\FireEye\xagt\xagt.exe" -i "C:\Program Files (x86)\FireEye\xagt\agent_config.json"'
+- name: Install an FireEye agent
+  win_package:
+    path: C:\Temp\xagtSetup.msi
+    arguments: /qn
+
+#- name: Run fireeye with configuration
+#  win_command: '"C:\Program Files (x86)\FireEye\xagt\xagt.exe" -i "C:\Program Files (x86)\FireEye\xagt\agent_config.json"'
 
 - name: Set service startup mode to auto and ensure it is started
   win_service:
