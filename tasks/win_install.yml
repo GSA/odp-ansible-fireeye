@@ -33,7 +33,7 @@
 
 - name: Install an FireEye agent
   win_package:
-    path: C:\build-artifacts\xagtSetup.msi
+    path: "C:\\build-artifacts\\{{ fireeye_package }}"
     arguments: /qn
 
 - name: Set service startup mode to auto and ensure it is started
