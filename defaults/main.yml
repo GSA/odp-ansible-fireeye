@@ -7,8 +7,5 @@ fireeye_provokey: "XXXXXX"
 fireeye_servers:
   - localhost
   - localhost.local
-fireeye_package: "xagt-32.30.0-1.el7.x86_64.rpm"
+fireeye_package: "xagt-32.30.12-1.el7.x86_64.rpm"
 
-# If you are installing from s3 
-fireeye_s3_bucket: ""
-fireeye_s3_prefix: ""

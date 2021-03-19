@@ -14,23 +14,27 @@
   when: result is defined and (result.state is not defined or result.name is not defined)
   ignore_errors: yes
 
-- name: Download FireEye Agent from S3
-  win_command: "PowerShell.exe -Command Read-S3Object -BucketName {{ fireeye_s3_bucket }} -Key {{ fireeye_s3_prefix }}/{{ fireeye_package }} -File c:\\Temp\\xagtSetup.msi"
+# Create Staging Folder
+- name: Create Staging Folder
+  win_file:
+    path: C:\build-artifacts
+    state: directory
+
+- name: Copy installer files to remote server
+  win_copy:
+    src: "{{ role_path }}/files/{{ fireeye_package }}"
+    dest: "C:\\build-artifacts\\{{ fireeye_package }}"
 
 # Configure FireEye service
 - name: Configure FireEye
   win_template:
     src: agent_config.json.j2
-    #dest: C:\Program Files (x86)\FireEye\xagt\agent_config.json
-    dest: C:\Temp\agent_config.json
+    dest: C:\build-artifacts\agent_config.json
 
 - name: Install an FireEye agent
   win_package:
-    path: C:\Temp\xagtSetup.msi
+    path: "C:\\build-artifacts\\{{ fireeye_package }}"
     arguments: /qn
-
-#- name: Run fireeye with configuration
-#  win_command: '"C:\Program Files (x86)\FireEye\xagt\xagt.exe" -i "C:\Program Files (x86)\FireEye\xagt\agent_config.json"'
 
 - name: Set service startup mode to auto and ensure it is started
   win_service:

@@ -6,57 +6,28 @@
     path: /build-artifacts/
     state: directory
 
-# Install through package manager when s3 bucket option is not set
-- name: Install FireEye package yum
-  yum:
-    name: "{{ fireeye_package }}"
-    state: present
-    disable_gpg_check: yes
-    validate_certs: no
-  when: fireeye_s3_bucket == "" and ansible_pkg_mgr == "yum"
-
-- name: Install FireEye package apt
-  apt:
-    name: "{{ fireeye_package }}"
-    state: present 
-    force: yes
-  when: fireeye_s3_bucket == "" and ansible_pkg_mgr == "apt"
-
-# Download and install FireEye package from s3 bucket when fireeye_s3_bucket is set
-
-- name: Ensure botocore and boto3 modules are installed
-  pip:
-    name:         [ "boto3", "botocore"]
-    extra_args:   "--user"
-  when: fireeye_s3_bucket != ""
-
-- name: Download from s3 bucket when fireeye_s3_bucket is set
-  aws_s3:
-    bucket: "{{ fireeye_s3_bucket }}"
-    object: "{{ fireeye_s3_prefix }}/{{ fireeye_package }}"
-    dest: /build-artifacts/{{ fireeye_package }}
-    mode: get
-  when: fireeye_s3_bucket != ""
+- name: Copy installer files to remote server
+  copy:
+    src: "{{ role_path }}/files/{{ fireeye_package }}"
+    dest: "/build-artifacts/{{ fireeye_package }}"
 
 - name: Install FireEye using yum if package manager is yum
   yum:
     name: /build-artifacts/{{ fireeye_package }}
     state: present
-  when: fireeye_s3_bucket != "" and ansible_pkg_mgr == "yum"
+  when: ansible_pkg_mgr == "yum"
 
 - name: Install FireEye using apt if package manager is apt
   apt:
     deb: /build-artifacts/{{ fireeye_package }}
-  when: fireeye_s3_bucket != "" and ansible_pkg_mgr == "apt"
+  when: ansible_pkg_mgr == "apt"
 
 - name: Remove the FireEye installer 
   file:
     path: /build-artifacts/{{ fireeye_package }}
     state: absent
-  when: fireeye_s3_bucket != ""    
 
 # Configure FireEye service
-
 - name: Configure FireEye
   template:
     src: agent_config.json.j2
