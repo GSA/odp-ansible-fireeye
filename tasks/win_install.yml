@@ -23,7 +23,7 @@
 - name: Copy installer files to remote server
   win_copy:
     src: "{{ role_path }}/files/{{ fireeye_package }}"
-    dest: "C:\build-artifacts\{{ fireeye_package }}"
+    dest: "C:\\build-artifacts\\{{ fireeye_package }}"
 
 # Configure FireEye service
 - name: Configure FireEye
