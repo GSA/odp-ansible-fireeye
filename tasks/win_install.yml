@@ -16,7 +16,7 @@
 
 # Create Staging Folder
 - name: Create Staging Folder
-  file:
+  win_file:
     path: C:\build-artifacts
     state: directory
 
