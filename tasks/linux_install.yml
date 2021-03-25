@@ -6,7 +6,7 @@
     path: /build-artifacts/
     state: directory
 
-- name: debug message
+- name: Display ansible pkg mgr fact value
   ansible.builtin.debug:
     msg:
     - "the ansible_pkg_mgr is {{ ansible_pkg_mgr }}"
@@ -26,6 +26,12 @@
   apt:
     deb: /build-artifacts/{{ fireeye_package }}
   when: ansible_pkg_mgr == "apt"
+
+- name: Install FireEye using yum if package manager is dnf
+  yum:
+    name: /build-artifacts/{{ fireeye_package }}
+    state: present
+  when: ansible_pkg_mgr == "dnf"
 
 - name: Remove the FireEye installer 
   file:
