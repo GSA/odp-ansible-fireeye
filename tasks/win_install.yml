@@ -41,6 +41,7 @@
     name: xagt
     start_mode: auto
     state: started
+  ignore_errors: yes
 
 - name: Check if service is running
   win_service:
