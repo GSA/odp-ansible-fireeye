@@ -7,5 +7,5 @@ fireeye_provokey: "XXXXXX"
 fireeye_servers:
   - localhost
   - localhost.local
-fireeye_package: "xagt-32.30.12-1.el7.x86_64.rpm"
-
+fireeye_package:
+fireeye_mxs_pki_distro_crl:
