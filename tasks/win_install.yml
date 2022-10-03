@@ -22,8 +22,8 @@
 
 - name: Copy installer files to remote server
   win_copy:
-    src: "{{ role_path }}/files/{{ fireeye_package }}"
-    dest: "C:\\build-artifacts\\{{ fireeye_package }}"
+    src: "{{ role_path }}/files/{{ fireeye_package[package_folder] }}"
+    dest: "C:\\build-artifacts\\{{ fireeye_package[package_folder] }}"
 
 # Configure FireEye service
 - name: Configure FireEye
@@ -33,7 +33,7 @@
 
 - name: Install an FireEye agent
   win_package:
-    path: "C:\\build-artifacts\\{{ fireeye_package }}"
+    path: "C:\\build-artifacts\\{{ fireeye_package[package_folder] }}"
     arguments: /qn
 
 - name: Set service startup mode to auto and ensure it is started
@@ -55,3 +55,4 @@
     state: stopped
   when: result is defined and (result.state is not defined or result.name is not defined)
   ignore_errors: yes
+  when: ami_build_flag

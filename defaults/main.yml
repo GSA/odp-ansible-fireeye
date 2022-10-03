@@ -1,11 +1,14 @@
 ---
 # defaults file for odp-ansible-fireeye
 
-fireeye_cacert: "XXXXXX"
-fireeye_provocert: "XXXXXX"
-fireeye_provokey: "XXXXXX"
-fireeye_servers:
-  - localhost
-  - localhost.local
-fireeye_package:
-fireeye_mxs_pki_distro_crl:
+fireeye_package: 
+  win: fireeye-agent.msi
+  rpm: fireeye-agent.rpm
+  deb: fireeye-agent.deb
+
+#Set this to true when this role is used to build AMI  
+ami_build_flag: False
+secret_text:
+access_key:
+secret_key:
+session_token:

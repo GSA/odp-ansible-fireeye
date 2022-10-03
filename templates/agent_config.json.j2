@@ -1,8 +1,7 @@
 {
   "serverlist": {
     "servers": [
-    {% for server in fireeye_servers %}
-
+    {% for server in fireeye_engine_servers%}
       {
         "server": "{{ server }}"
       }{% if not loop.last %},{% endif %}

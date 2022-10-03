@@ -1,15 +1,57 @@
 ---
-# tasks file for odp-ansible-fireeye
+
+- set_fact:
+    fireeye_cacert: "{{ secret_text | json_query('fireeye_cacert') }}"
+    fireeye_provocert: "{{ secret_text | json_query('fireeye_provocert') }}"
+    fireeye_provokey: "{{ secret_text | json_query('fireeye_provokey') }}"
+    fireeye_servers: "{{ secret_text | json_query('fireeye_servers')}}"
+    fireeye_mxs_pki_distro_crl: "{{ secret_text | json_query('fireeye_mxs_pki_distro_crl') }}"
+- set_fact:
+    fireeye_engine_servers:  "{{ fireeye_servers.split(',') }}" 
 
 - name: RedHat
-  include_tasks: linux_install.yml
+  set_fact:
+    package_folder: rpm
   when: ansible_facts['os_family']|lower == 'redhat'
 
 - name: Ubuntu and debian
-  include_tasks: linux_install.yml
+  set_fact:
+    package_folder: deb
+  when: ansible_facts['os_family']|lower == 'debian'
+
+- name: Windows Server and Workstation
+  set_fact:
+    package_folder: win
+  when: ansible_facts['os_family']|lower == 'windows'
+
+- name: Check if installer exists
+  stat:
+    path: "{{ role_path }}/files/{{ fireeye_package[package_folder] }}"
+  register: stat_result
+  delegate_to: localhost
+  become: false
+
+- name: Download Binaries from S3
+  aws_s3:
+    bucket: sectools-installation-artifacts
+    object: "{{ package_folder }}/{{ fireeye_package[package_folder] }}"
+    dest: "{{ role_path }}/files/{{ fireeye_package[package_folder] }}"
+    mode: get
+    aws_access_key: "{{ access_key }}"
+    aws_secret_key: "{{ secret_key }}"
+    aws_security_token: "{{ session_token }}"
+  when: not stat_result.stat.exists
+  delegate_to: localhost
+  become: false
+
+- name: RedHat
+  include_tasks: redhat.yml
+  when: ansible_facts['os_family']|lower == 'redhat'
+
+- name: Ubuntu and debian
+  include_tasks: ubuntu.yml
   when: ansible_facts['os_family']|lower == 'debian'
 
 - name: Windows Server and Workstation
   include_tasks: win_install.yml
   when: ansible_facts['os_family']|lower == 'windows'
-  
