@@ -1,0 +1,46 @@
+---
+
+# Create Staging Folder
+- name: Create Staging Folder
+  file:
+    path: /build-artifacts/
+    state: directory
+
+- name: Copy installer files to remote server
+  copy:
+    src: "{{ role_path }}/files/{{ fireeye_package[package_folder] }}"
+    dest: "/build-artifacts/{{ fireeye_package[package_folder] }}"
+
+- name: Install FireEye using apt if package manager is apt
+  apt:
+    deb: /build-artifacts/{{ fireeye_package[package_folder] }}
+  when: ansible_pkg_mgr == "apt"
+
+- name: Remove the FireEye installer 
+  file:
+    path: /build-artifacts/{{ fireeye_package[package_folder] }}
+    state: absent
+
+- name: Prepare configuration
+  template:
+    src: agent_config.json.j2
+    dest: /var/lib/fireeye/xagt/agent_config.json
+
+- name: Run FireEye agent with configuration
+  shell: /opt/fireeye/bin/xagt -i /var/lib/fireeye/xagt/agent_config.json
+  args:
+    creates: /var/lib/fireeye/xagt/main.db
+
+- name: Enable and start service xagt
+  service:
+    name: xagt
+    state: started
+    enabled: yes
+
+- name: Stop the service before creating AMI
+  service:
+    name: xagt
+    state: stopped
+  when: ami_build_flag
+
+
