@@ -13,16 +13,23 @@
   debug:
     var: ansible_facts
 
-- name: RedHat
-  set_fact:
-    package_folder: rpm
-    ansible_facts:
-      pkg_mgr: "yum"
-  when: ansible_facts['os_family']|lower == 'redhat'
+- name: Set pkg_mgr Fact
+  update_fact:
+    updates:
+      - path: ansibile_facts.pkg_mgr
+        value: "yum" 
+  when: 
+    - ansible_facts['os_family']|lower == 'redhat'
+    - ansible_facts['pkg_mgr']|lower == 'unknown'
 
 - name: Print all available ansible facts after setting pkg_mgr
   debug:
     var: ansible_facts
+
+- name: RedHat
+  set_fact:
+    package_folder: rpm
+  when: ansible_facts['os_family']|lower == 'redhat'
 
 - name: Ubuntu and debian
   set_fact:
