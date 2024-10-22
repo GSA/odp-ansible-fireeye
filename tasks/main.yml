@@ -9,6 +9,10 @@
 - set_fact:
     fireeye_engine_servers:  "{{ fireeye_servers.split(',') }}" 
 
+- name: Print all available facts
+  debug:
+    var: ansible_facts
+
 - name: RedHat
   set_fact:
     package_folder: rpm
