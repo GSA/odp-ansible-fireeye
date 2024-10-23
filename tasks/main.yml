@@ -14,7 +14,7 @@
     var: ansible_facts
 
 - name: Set pkg_mgr Fact
-  update_fact:
+  ansible.utils.update_fact:
     updates:
       - path: ansibile_facts.pkg_mgr
         value: "yum" 
