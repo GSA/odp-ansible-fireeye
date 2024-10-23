@@ -9,23 +9,6 @@
 - set_fact:
     fireeye_engine_servers:  "{{ fireeye_servers.split(',') }}" 
 
-- name: Print all available ansible facts
-  debug:
-    var: ansible_facts
-
-- name: Set pkg_mgr Fact
-  ansible.utils.update_fact:
-    updates:
-      - path: ansibile_facts.pkg_mgr
-        value: "yum" 
-  when: 
-    - ansible_facts['os_family']|lower == 'redhat'
-    - ansible_facts['pkg_mgr']|lower == 'unknown'
-
-- name: Print all available ansible facts after setting pkg_mgr
-  debug:
-    var: ansible_facts
-
 - name: RedHat
   set_fact:
     package_folder: rpm
