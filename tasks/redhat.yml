@@ -15,7 +15,8 @@
   yum:
     name: /build-artifacts/{{ fireeye_package[package_folder] }}
     state: present
-  when: ansible_pkg_mgr == "yum"
+  when: 
+    - ansible_pkg_mgr == "yum" or ansible_pkg_mgr|lower == "unknown"
 
 - name: Install FireEye using yum if package manager is dnf
   yum:
