@@ -12,9 +12,7 @@
     dest: "/build-artifacts/{{ fireeye_package[package_folder] }}"
 
 - name: Install FireEye using yum if package manager is yum
-  yum:
-    name: /build-artifacts/{{ fireeye_package[package_folder] }}
-    state: present
+  command: yum install -y /build-artifacts/{{ fireeye_package[package_folder] }}
   when: 
     - ansible_pkg_mgr == "yum" or ansible_pkg_mgr|lower == "unknown"
 
