@@ -12,15 +12,12 @@
     dest: "/build-artifacts/{{ fireeye_package[package_folder] }}"
 
 - name: Install FireEye using yum if package manager is yum
-  command: yum install -y /build-artifacts/{{ fireeye_package[package_folder] }}
+  command: yum install -y /build-artifacts/{{ fireeye_package[package_folder] }} --nogpgcheck
   when: 
     - ansible_pkg_mgr == "yum" or ansible_pkg_mgr|lower == "unknown"
 
 - name: Install FireEye using yum if package manager is dnf
-  yum:
-    name: /build-artifacts/{{ fireeye_package[package_folder] }}
-    state: present
-    disable_gpg_check: yes
+  shell: yum install /build-artifacts/{{ fireeye_package[package_folder] }} -y --nogpgcheck
   when: ansible_pkg_mgr == "dnf"
 
 - name: Remove the FireEye installer 
