@@ -32,14 +32,14 @@
   become: false
 
 - name: Download Binaries from S3
-  aws_s3:
+  amazon.aws.s3_object:
     bucket: sectools-installation-artifacts
     object: "{{ package_folder }}/{{ fireeye_package[package_folder] }}"
     dest: "{{ role_path }}/files/{{ fireeye_package[package_folder] }}"
     mode: get
-    aws_access_key: "{{ access_key }}"
-    aws_secret_key: "{{ secret_key }}"
-    aws_security_token: "{{ session_token }}"
+    access_key: "{{ access_key }}"
+    secret_key: "{{ secret_key }}"
+    session_token: "{{ session_token }}"
   when: not stat_result.stat.exists
   delegate_to: localhost
   become: false
